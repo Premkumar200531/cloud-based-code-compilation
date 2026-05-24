@@ -1,0 +1,380 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-wrap">
+    <div class="dashboard-header">
+        <div class="welcome">
+            <h2>Welcome back, <span class="gradient-text">{{ name }}</span></h2>
+            <p>Here's what's happening with your projects.</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('main.editor') }}" class="btn">
+                <i class="fas fa-plus"></i> New Project
+            </a>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(99, 102, 241, 0.1); color: #6366f1;">
+                <i class="fas fa-code"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Total Executions</h3>
+                <p>{{ runs|length }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Success Rate</h3>
+                <p>
+                    {% set success_count = runs|selectattr('status', 'equalto', 'success')|list|length %}
+                    {{ (success_count / runs|length * 100)|round(1) if runs|length > 0 else 0 }}%
+                </p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Avg. Time</h3>
+                <p>
+                    {% set total_time = runs|sum(attribute='time_ms') %}
+                    {{ (total_time / runs|length)|round(0) if runs|length > 0 else 0 }} ms
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="activity-section">
+        <div class="section-header">
+            <h3>My Saved Projects</h3>
+            <a href="#" class="view-all">Manage All</a>
+        </div>
+        <div class="snippets-grid" id="snippetsContainer">
+            <!-- Snippets will be loaded here via JS -->
+            <div class="loading">Loading your projects...</div>
+        </div>
+    </div>
+
+    <div class="activity-section">
+        <div class="section-header">
+            <h3>Recent Executions</h3>
+            <a href="#" class="view-all">View History</a>
+        </div>
+
+        <div class="table-card">
+            <table class="premium-table">
+                <thead>
+                    <tr>
+                        <th>Execution ID</th>
+                        <th>Language</th>
+                        <th>Status</th>
+                        <th>Runtime</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for run in runs %}
+                    <tr>
+                        <td><code class="run-id">#{{ run.id }}</code></td>
+                        <td>
+                            <div class="lang-tag">
+                                <i
+                                    class="fab fa-{{ run.language.name.lower() if run.language.name.lower() in ['python', 'javascript'] else 'terminal' }}"></i>
+                                {{ run.language.name }}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="status-chip {{ 'success' if run.status == 'success' else 'error' }}">
+                                <i class="fas {{ 'fa-check' if run.status == 'success' else 'fa-times' }}"></i>
+                                {{ run.status.title() }}
+                            </span>
+                        </td>
+                        <td>{{ run.time_ms }}ms</td>
+                        <td>{{ run.created_at.strftime('%b %d, %H:%M') }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <i class="fas fa-box-open"></i>
+                            <p>No executions yet. Start coding to see your history!</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .dashboard-wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 3rem;
+    }
+
+    .welcome h2 {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+    }
+
+    .welcome p {
+        color: var(--text-dim);
+    }
+
+    .gradient-text {
+        background: var(--gradient-1);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 4rem;
+    }
+
+    .stat-card {
+        background: var(--bg-card);
+        padding: 1.5rem;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .stat-content h3 {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-dim);
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-content p {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .view-all {
+        color: var(--accent);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .table-card {
+        background: var(--bg-card);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .premium-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .premium-table th {
+        background: rgba(0, 0, 0, 0.1);
+        padding: 1rem 1.5rem;
+        text-align: left;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: var(--text-dim);
+    }
+
+    .premium-table td {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.95rem;
+    }
+
+    .run-id {
+        background: var(--glass);
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    .lang-tag {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .status-chip {
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .status-chip.success {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .status-chip.error {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem !important;
+        color: var(--text-dim);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+    }
+
+    /* Snippets Grid */
+    .snippets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .snippet-card {
+        background: var(--bg-card);
+        padding: 1.5rem;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .snippet-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent);
+        background: var(--bg-card-hover);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .snippet-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--gradient-1);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .snippet-card:hover::before {
+        opacity: 1;
+    }
+
+    .snippet-card h4 {
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .snippet-meta {
+        font-size: 0.8rem;
+        color: var(--text-dim);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .loading {
+        text-align: center;
+        color: var(--text-dim);
+        padding: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('snippetsContainer');
+        fetch('/api/snippets')
+            .then(res => res.json())
+            .then(data => {
+                container.innerHTML = '';
+                if (data.length === 0) {
+                    container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No saved projects found. Start coding and save your work!</p>
+                    </div>`;
+                    return;
+                }
+                data.forEach(s => {
+                    const card = document.createElement('a');
+                    card.href = s.is_playground ? '/playground?snippet=' + s.id : '/editor?snippet=' + s.id;
+                    card.className = 'snippet-card';
+                    card.innerHTML = `
+                    <h4>${s.title}</h4>
+                    <div class="snippet-meta">
+                        <span><i class="fas ${s.is_playground ? 'fa-globe' : 'fa-code'}"></i> ${s.language}</span>
+                        <span><i class="far fa-calendar-alt"></i> ${s.created_at}</span>
+                    </div>
+                `;
+                    container.appendChild(card);
+                });
+            })
+            .catch(err => {
+                container.innerHTML = '<p class="error">Error loading snippets: ' + err + '</p>';
+            });
+    });
+</script>
+{% endblock %}
