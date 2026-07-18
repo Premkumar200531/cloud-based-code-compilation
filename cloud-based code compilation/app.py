@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 from flask import Flask
 from config import Config
 from database import db
@@ -146,4 +146,3 @@ def create_app():
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=True, port=5000)
->>>>>>> 1b9f44e803ada8be2eab82c14e451e7713b058b2
