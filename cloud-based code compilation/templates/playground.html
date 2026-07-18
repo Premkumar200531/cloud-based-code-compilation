@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+    body {
+        overflow: hidden;
+    }
+
+    .main-container {
+        padding: 0;
+        max-width: none;
+    }
+
+    .playground-layout {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 70px);
+        background: var(--bg-body);
+    }
+
+    .playground-header {
+        height: 50px;
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1.5rem;
+        z-index: 10;
+    }
+
+    .playground-main {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+    }
+
+    .editors-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid var(--border);
+        background: #1e1e1e;
+    }
+
+    .editor-box {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid var(--border);
+        position: relative;
+    }
+
+    .editor-label {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        z-index: 5;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background: var(--glass);
+        padding: 2px 8px;
+        border-radius: 4px;
+        color: var(--text-dim);
+        pointer-events: none;
+    }
+
+    .monaco-instance {
+        flex: 1;
+        width: 100%;
+    }
+
+    /* Preview Section */
+    .preview-container {
+        flex: 1;
+        background: white;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .preview-toolbar {
+        height: 40px;
+        background: #f1f5f9;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        padding: 0 1rem;
+        gap: 1rem;
+        color: #64748b;
+        font-size: 0.8rem;
+    }
+
+    #preview-iframe {
+        flex: 1;
+        border: none;
+        width: 100%;
+        background: white;
+    }
+
+    .btn-run-web {
+        background: var(--success);
+        color: white;
+        padding: 0.4rem 1rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="playground-layout">
+    <div class="playground-header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <i class="fas fa-globe" style="color: var(--accent);"></i>
+            <span style="font-weight: 600;">Web Playground</span>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <button id="saveWebBtn" class="btn btn-outline" {{ 'disabled' if not current_user.is_authenticated else ''
+                }} title="{{ 'Login to save' if not current_user.is_authenticated else 'Save Project' }}">
+                <i class="fas fa-save"></i> Save
+            </button>
+            <button id="downloadWebBtn" class="btn btn-outline" title="Download HTML">
+                <i class="fas fa-file-download"></i> Download
+            </button>
+            <button id="runWebBtn" class="btn-run-web">
+                <i class="fas fa-sync-alt"></i> Update Preview
+            </button>
+        </div>
+    </div>
+
+    <div class="playground-main">
+        <!-- Editors -->
+        <div class="editors-container">
+            <div class="editor-box">
+                <div class="editor-label">HTML</div>
+                <div id="html-editor" class="monaco-instance"></div>
+            </div>
+            <div class="editor-box">
+                <div class="editor-label">CSS</div>
+                <div id="css-editor" class="monaco-instance"></div>
+            </div>
+            <div class="editor-box">
+                <div class="editor-label">JavaScript</div>
+                <div id="js-editor" class="monaco-instance"></div>
+            </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="preview-container">
+            <div class="preview-toolbar">
+                <i class="fas fa-desktop"></i> Live Preview
+                <span style="margin-left: auto; font-size: 0.7rem; color: #94a3b8;">Refreshes on update</span>
+            </div>
+            <iframe id="preview-iframe"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- Load Monaco Editor -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.38.0/min/vs/loader.min.js"></script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.38.0/min/vs' } });
+
+    require(['vs/editor/editor.main'], function () {
+        const commonOptions = {
+            theme: 'vs-dark',
+            fontSize: 13,
+            fontFamily: 'JetBrains Mono',
+            automaticLayout: true,
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+            padding: { top: 10 }
+        };
+
+        window.htmlEditor = monaco.editor.create(document.getElementById('html-editor'), {
+            value: '<div class="card">\n  <h1>Hello CodeNova</h1>\n  <p>Start editing to see the magic!</p>\n  <button id="btn">Click Me</button>\n</div>',
+            language: 'html',
+            ...commonOptions
+        });
+
+        window.cssEditor = monaco.editor.create(document.getElementById('css-editor'), {
+            value: 'body {\n  font-family: system-ui, sans-serif;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  height: 100vh;\n  background: #f0f2f5;\n}\n\n.card {\n  background: white;\n  padding: 2rem;\n  border-radius: 12px;\n  box-shadow: 0 4px 6px rgba(0,0,0,0.1);\n  text-align: center;\n}\n\nh1 { color: #6366f1; }\n\nbutton {\n  background: #6366f1;\n  color: white;\n  border: none;\n  padding: 0.5rem 1rem;\n  border-radius: 6px;\n  cursor: pointer;\n}',
+            language: 'css',
+            ...commonOptions
+        });
+
+        window.jsEditor = monaco.editor.create(document.getElementById('js-editor'), {
+            value: 'const btn = document.getElementById("btn");\n\nbtn.addEventListener("click", () => {\n  alert("Button Clicked!");\n  document.body.style.background = \n    "hsl(" + Math.random() * 360 + ", 70%, 80%)";\n});',
+            language: 'javascript',
+            ...commonOptions
+        });
+
+        document.getElementById('runWebBtn').addEventListener('click', updatePreview);
+
+        // Save Playground
+        const saveWebBtn = document.getElementById('saveWebBtn');
+        if (saveWebBtn) {
+            saveWebBtn.addEventListener('click', () => {
+                const title = prompt("Enter project title:", "My Web Project");
+                if (!title) return;
+
+                const playgroundData = {
+                    html: window.htmlEditor.getValue(),
+                    css: window.cssEditor.getValue(),
+                    js: window.jsEditor.getValue()
+                };
+
+                fetch('/api/snippets/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: title,
+                        code: JSON.stringify(playgroundData),
+                        is_playground: true
+                    })
+                })
+                    .then(async res => {
+                        const contentType = res.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            return res.json();
+                        } else {
+                            const text = await res.text();
+                            throw new Error(text.includes('<!DOCTYPE') ? "Server returned HTML (likely session expired or error)" : text);
+                        }
+                    })
+                    .then(data => alert(data.message || data.error))
+                    .catch(err => alert("Error saving: " + err.message));
+            });
+        }
+
+        // Download Playground
+        document.getElementById('downloadWebBtn').addEventListener('click', () => {
+            const html = window.htmlEditor.getValue();
+            const css = window.cssEditor.getValue();
+            const js = window.jsEditor.getValue();
+            const combined = `<!DOCTYPE html>\n<html>\n<head>\n<style>\n${css}\n</style>\n</head>\n<body>\n${html}\n<script>\n${js}\n<\/script>\n</body>\n</html>`;
+
+            const blob = new Blob([combined], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "index.html";
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // Initial preview
+        updatePreview();
+        loadPlaygroundSnippet();
+
+        // Optional: Auto-update on change (debounced)
+        let timeout;
+        [window.htmlEditor, window.cssEditor, window.jsEditor].forEach(ed => {
+            ed.onDidChangeModelContent(() => {
+                clearTimeout(timeout);
+                timeout = setTimeout(updatePreview, 1000);
+            });
+        });
+    });
+
+    function loadPlaygroundSnippet() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const snippetId = urlParams.get('snippet');
+        if (snippetId) {
+            fetch(`/api/snippet/${snippetId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.code && data.is_playground) {
+                        const pgData = JSON.parse(data.code);
+                        window.htmlEditor.setValue(pgData.html || '');
+                        window.cssEditor.setValue(pgData.css || '');
+                        window.jsEditor.setValue(pgData.js || '');
+                        updatePreview();
+                    }
+                })
+                .catch(err => console.error("Error loading snippet:", err));
+        }
+    }
+
+    function updatePreview() {
+        const html = window.htmlEditor.getValue();
+        const css = window.cssEditor.getValue();
+        const js = window.jsEditor.getValue();
+        const iframe = document.getElementById('preview-iframe');
+
+        const combined = `
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <style>${css}</style>
+                </head>
+                <body>
+                    ${html}
+                    <script>${js}<\/script>
+                </body>
+            </html>
+        `;
+
+        const blob = new Blob([combined], { type: 'text/html' });
+        iframe.src = URL.createObjectURL(blob);
+    }
+</script>
+{% endblock %}
