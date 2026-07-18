@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends "base.html" %}
 
 {% block content %}
@@ -97,4 +98,105 @@
         background: rgba(255, 255, 255, 0.1);
     }
 </style>
+=======
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container">
+    <div class="card">
+        <h1>{{ action }} User</h1>
+        <form action="{{ url_for('admin.edit_user', user_id=user.id) if user else url_for('admin.add_user') }}"
+            method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" value="{{ user.username if user else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="{{ user.email if user else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password {{ '(Leave blank to keep current)' if user else '' }}</label>
+                <input type="password" id="password" name="password" {{ 'required' if not user else '' }}>
+            </div>
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" name="role">
+                    <option value="user" {{ 'selected' if user and user.role=='user' else '' }}>User</option>
+                    <option value="admin" {{ 'selected' if user and user.role=='admin' else '' }}>Admin</option>
+                </select>
+            </div>
+            {% if user %}
+            <div class="form-group checkbox-group">
+                <label for="is_active">
+                    <input type="checkbox" id="is_active" name="is_active" {{ 'checked' if user.is_active else '' }}>
+                    Active Account
+                </label>
+            </div>
+            {% endif %}
+            <div class="form-actions">
+                <button type="submit" class="btn">{{ action }} User</button>
+                <a href="{{ url_for('admin.manage_users') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-container {
+        max-width: 500px;
+        margin: 2rem auto;
+    }
+
+    .card {
+        background: var(--bg-card);
+        padding: 2rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-secondary);
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        background: var(--bg-dark);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+        border-radius: 0.5rem;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+    }
+
+    .checkbox-group label {
+        margin-bottom: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+    }
+</style>
+>>>>>>> 1b9f44e803ada8be2eab82c14e451e7713b058b2
 {% endblock %}

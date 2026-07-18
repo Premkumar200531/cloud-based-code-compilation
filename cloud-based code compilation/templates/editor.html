@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends "base.html" %}
 
 {% block extra_head %}
@@ -513,4 +514,521 @@
         }
     }
 </script>
+=======
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+    body {
+        overflow: hidden;
+    }
+
+    /* Prevent main scroll */
+    .main-container {
+        padding: 0;
+        max-width: none;
+    }
+
+    .editor-layout {
+        display: flex;
+        height: calc(100vh - 70px);
+        background: var(--bg-body);
+    }
+
+    /* Sidebar Panel */
+    .editor-sidebar {
+        width: 320px;
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 2rem;
+        z-index: 10;
+    }
+
+    .panel-section h4 {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-dim);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .custom-select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        background: var(--bg-body);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--text-main);
+        font-family: inherit;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.2s;
+    }
+
+    .custom-select:focus {
+        border-color: var(--accent);
+    }
+
+    /* Center Editor Area */
+    .editor-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #1e1e1e;
+    }
+
+    .editor-toolbar {
+        height: 50px;
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1.5rem;
+    }
+
+    .file-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--text-dim);
+        font-size: 0.9rem;
+    }
+
+    #monaco-container {
+        flex: 1;
+        width: 100%;
+    }
+
+    /* Output Panel */
+    .output-sidebar {
+        width: 400px;
+        background: var(--bg-card);
+        border-left: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        transition: width 0.3s ease;
+    }
+
+    .tab-header {
+        display: flex;
+        background: rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .tab-btn {
+        padding: 1rem 1.5rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-dim);
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        border-bottom: 2px solid transparent;
+    }
+
+    .tab-btn.active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+        background: var(--glass);
+    }
+
+    .tab-content {
+        flex: 1;
+        padding: 1rem;
+        overflow-y: auto;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.9rem;
+    }
+
+    .terminal-output {
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        min-height: 100%;
+        white-space: pre-wrap;
+    }
+
+    #stdin-area {
+        width: 100%;
+        height: 150px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text-main);
+        padding: 1rem;
+        resize: none;
+        font-family: inherit;
+    }
+
+    .status-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        color: var(--text-dim);
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--text-dim);
+    }
+
+    .dot.running {
+        background: var(--warning);
+        animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.4;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="editor-layout">
+    <!-- Left Sidebar -->
+    <aside class="editor-sidebar">
+        <div class="panel-section">
+            <h4><i class="fas fa-layer-group"></i> Environment</h4>
+            <select id="languageSelect" class="custom-select">
+                <option value="" disabled selected>Select Language</option>
+            </select>
+        </div>
+
+        <div class="panel-section">
+            <h4><i class="fas fa-info-circle"></i> Instructions</h4>
+            <p style="font-size: 0.85rem; color: var(--text-dim); line-height: 1.6;">
+                Write your code in the center editor. You can provide inputs in the terminal panel on the right. Click
+                'Run' to execute.
+            </p>
+        </div>
+
+        <div class="panel-section" style="margin-top: auto;">
+            <h4><i class="fas fa-keyboard"></i> Shortcuts</h4>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">
+                <div style="display:flex; justify-content:space-between; margin-bottom: 0.5rem;">
+                    <span>Run Code</span> <span
+                        style="background:var(--glass); padding:2px 4px; border-radius:4px;">Ctrl + Enter</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Format</span> <span style="background:var(--glass); padding:2px 4px; border-radius:4px;">Alt +
+                        Shift + F</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Editor -->
+    <section class="editor-main">
+        <div class="editor-toolbar">
+            <div class="file-info">
+                <i class="fas fa-file-code"></i>
+                <span id="currentFileName">main.py</span>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div id="statusIndicator" class="status-badge" style="display: none;">
+                    <span class="dot running"></span> <span>Executing...</span>
+                </div>
+                <button id="saveBtn" class="btn btn-outline" {{ 'disabled' if not current_user.is_authenticated else ''
+                    }} title="{{ 'Login to save' if not current_user.is_authenticated else 'Save Code' }}">
+                    <i class="fas fa-save"></i>
+                </button>
+                <button id="downloadBtn" class="btn btn-outline" title="Download File">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button id="runBtn" class="btn">
+                    <i class="fas fa-play"></i> Run
+                </button>
+            </div>
+        </div>
+        <div id="monaco-container"></div>
+    </section>
+
+    <!-- Right IO Panel -->
+    <aside class="output-sidebar" id="ioSidebar">
+        <div class="tab-header">
+            <button class="tab-btn active" data-tab="output">Output</button>
+            <button class="tab-btn" data-tab="input">Input</button>
+        </div>
+
+        <div class="tab-content" id="outputTab">
+            <div id="stdout" class="terminal-output">Ready to execute...</div>
+            <div id="stderr" class="terminal-output"
+                style="color: var(--danger); display: none; margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+            </div>
+        </div>
+
+        <div class="tab-content" id="inputTab" style="display: none;">
+            <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1rem;">Provide standard input (stdin)
+                here:</p>
+            <textarea id="stdin-area" placeholder="e.g. 5&#10;hello world"></textarea>
+        </div>
+    </aside>
+</div>
+
+<!-- Load Monaco Editor -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.38.0/min/vs/loader.min.js"></script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.38.0/min/vs' } });
+
+    require(['vs/editor/editor.main'], function () {
+        // Theme customization for Monaco
+        monaco.editor.defineTheme('novaDark', {
+            base: 'vs-dark',
+            inherit: true,
+            rules: [],
+            colors: {
+                'editor.background': '#1e1e1e',
+                'editor.lineHighlightBackground': '#2d2d2d',
+                'editorCursor.foreground': '#6366f1',
+                'editorIndentGuide.activeBackground': '#6366f1'
+            }
+        });
+
+        window.editor = monaco.editor.create(document.getElementById('monaco-container'), {
+            value: 'print("Hello, CodeNova!")',
+            language: 'python',
+            theme: 'novaDark',
+            fontSize: 14,
+            fontFamily: 'JetBrains Mono',
+            automaticLayout: true,
+            minimap: { enabled: false },
+            padding: { top: 20 },
+            scrollBeyondLastLine: false,
+            roundedSelection: true,
+            cursorSmoothCaretAnimation: "on",
+            smoothScrolling: true
+        });
+
+        initApp();
+        loadSnippetIfExists();
+    });
+
+    function loadSnippetIfExists() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const snippetId = urlParams.get('snippet');
+        if (snippetId) {
+            fetch(`/api/snippet/${snippetId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.code && !data.is_playground) {
+                        window.editor.setValue(data.code);
+                        if (data.language_id) {
+                            const langSelect = document.getElementById('languageSelect');
+                            langSelect.value = data.language_id;
+                            langSelect.dispatchEvent(new Event('change'));
+                        }
+                    }
+                })
+                .catch(err => console.error("Error loading snippet:", err));
+        }
+    }
+
+    function initApp() {
+        const langSelect = document.getElementById('languageSelect');
+        const runBtn = document.getElementById('runBtn');
+        const stdout = document.getElementById('stdout');
+        const stderr = document.getElementById('stderr');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const currentFileName = document.getElementById('currentFileName');
+
+        // Tab Logic
+        const tabs = document.querySelectorAll('.tab-btn');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+                document.getElementById(`${target}Tab`).style.display = 'block';
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        // Fetch languages
+        fetch('/api/languages')
+            .then(res => res.json())
+            .then(data => {
+                langSelect.innerHTML = '';
+                data.forEach(lang => {
+                    const option = document.createElement('option');
+                    option.value = lang.id;
+                    option.textContent = lang.name;
+                    option.dataset.name = lang.name.toLowerCase();
+                    langSelect.appendChild(option);
+                });
+
+                if (data.length > 0) {
+                    const lastLangId = localStorage.getItem('last_lang_id');
+                    const initialLang = data.find(l => l.id == lastLangId) || data[0];
+                    langSelect.value = initialLang.id;
+                    updateLanguage(initialLang);
+                }
+            });
+
+        langSelect.addEventListener('change', () => {
+            const selectedOption = langSelect.options[langSelect.selectedIndex];
+            const langName = selectedOption.dataset.name;
+            localStorage.setItem('last_lang_id', langSelect.value);
+
+            let monacoLang = langName;
+            if (langName === 'c++') monacoLang = 'cpp';
+            if (langName === 'c') monacoLang = 'c';
+
+            const extensions = { 'python': 'py', 'javascript': 'js', 'cpp': 'cpp', 'c': 'c' };
+            currentFileName.textContent = `main.${extensions[monacoLang] || 'txt'}`;
+
+            monaco.editor.setModelLanguage(window.editor.getModel(), monacoLang);
+        });
+
+        runBtn.addEventListener('click', executeCode);
+
+        // Save Functionality
+        const saveBtn = document.getElementById('saveBtn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', () => {
+                const title = prompt("Enter snippet title:", "My Code");
+                if (!title) return;
+
+                fetch('/api/snippets/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: title,
+                        code: window.editor.getValue(),
+                        language_id: langSelect.value,
+                        is_playground: false
+                    })
+                })
+                    .then(async res => {
+                        const contentType = res.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            return res.json();
+                        } else {
+                            const text = await res.text();
+                            throw new Error(text.includes('<!DOCTYPE') ? "Server returned HTML (likely session expired or error)" : text);
+                        }
+                    })
+                    .then(data => alert(data.message || data.error))
+                    .catch(err => alert("Error saving: " + err.message));
+            });
+        }
+
+        // Download Functionality
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const code = window.editor.getValue();
+            const fileName = currentFileName.textContent;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // Keyboard Shortcut
+        window.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                executeCode();
+            }
+        });
+
+        function executeCode() {
+            const code = window.editor.getValue();
+            const languageId = langSelect.value;
+            const stdin = document.getElementById('stdin-area').value;
+
+            if (!languageId) return;
+
+            // Switch to output tab
+            document.querySelector('[data-tab="output"]').click();
+
+            stdout.textContent = "> Program started...\n";
+            stderr.style.display = "none";
+            runBtn.disabled = true;
+            statusIndicator.style.display = "flex";
+
+            fetch('/api/execute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ language_id: languageId, code: code, stdin: stdin })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    stdout.textContent = data.stdout || "";
+                    if (!data.stdout) stdout.textContent = "> Execution finished (empty output)";
+
+                    if (data.stderr) {
+                        stderr.style.display = "block";
+                        stderr.textContent = data.stderr;
+                    }
+
+                    if (data.status !== 'success' && !data.stderr) {
+                        stderr.style.display = "block";
+                        stderr.textContent = `Process finished with status: ${data.status}`;
+                    }
+                })
+                .catch(err => {
+                    stderr.style.display = "block";
+                    stderr.textContent = "System Error: " + err;
+                })
+                .finally(() => {
+                    runBtn.disabled = false;
+                    statusIndicator.style.display = "none";
+                });
+        }
+
+        function updateLanguage(lang) {
+            const name = lang.name.toLowerCase();
+            let snippet = "";
+            let mode = name;
+            let ext = "txt";
+
+            if (name === 'python') {
+                snippet = 'print("Hello, CodeNova!")\n\n# Try some logic\nname = input("Enter your name: ")\nprint(f"Welcome, {name}!")';
+                ext = "py";
+            } else if (name === 'javascript') {
+                snippet = 'console.log("Hello from JavaScript!");\n\nconst greet = (name) => `Welcome, ${name}!`;\nconsole.log(greet("Developer"));';
+                mode = 'javascript';
+                ext = "js";
+            } else if (name === 'c') {
+                snippet = '#include <stdio.h>\n\nint main() {\n    printf("Hello from C\\n");\n    return 0;\n}';
+                mode = 'c';
+                ext = "c";
+            } else if (name === 'c++') {
+                snippet = '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello from C++" << endl;\n    return 0;\n}';
+                mode = 'cpp';
+                ext = "cpp";
+            }
+
+            window.editor.setValue(snippet);
+            monaco.editor.setModelLanguage(window.editor.getModel(), mode);
+            currentFileName.textContent = `main.${ext}`;
+        }
+    }
+</script>
+>>>>>>> 1b9f44e803ada8be2eab82c14e451e7713b058b2
 {% endblock %}

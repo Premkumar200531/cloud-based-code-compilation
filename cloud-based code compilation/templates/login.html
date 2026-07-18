@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends "base.html" %}
 
 {% block content %}
@@ -157,4 +158,165 @@
         font-weight: 600;
     }
 </style>
+=======
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Welcome Back</h1>
+            <p>Ready to write some amazing code?</p>
+        </div>
+
+        <form action="{{ url_for('auth.login') }}" method="POST">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-container">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" placeholder="name@company.com" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-container">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <label class="remember-me">
+                    <input type="checkbox" name="remember">
+                    <span>Remember me</span>
+                </label>
+                <a href="#" class="forgot-link">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-block">Sign In</button>
+        </form>
+
+        <div class="auth-alternate">
+            <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Create one for free</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auth-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 200px);
+    }
+
+    .auth-card {
+        background: var(--bg-card);
+        padding: 2.5rem;
+        border-radius: 20px;
+        width: 100%;
+        max-width: 440px;
+        border: 1px solid var(--border);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .auth-header h1 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-header p {
+        color: var(--text-dim);
+        font-size: 0.95rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text-dim);
+    }
+
+    .input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .input-container i {
+        position: absolute;
+        left: 1rem;
+        color: var(--text-dim);
+    }
+
+    .input-container input {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 3rem;
+        background: var(--bg-body);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        color: var(--text-main);
+        font-family: inherit;
+        transition: all 0.2s ease;
+    }
+
+    .input-container input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--accent-glow);
+    }
+
+    .form-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        font-size: 0.85rem;
+    }
+
+    .remember-me {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        color: var(--text-dim);
+    }
+
+    .forgot-link {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .btn-block {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    .auth-alternate {
+        text-align: center;
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        color: var(--text-dim);
+    }
+
+    .auth-alternate a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+    }
+</style>
+>>>>>>> 1b9f44e803ada8be2eab82c14e451e7713b058b2
 {% endblock %}

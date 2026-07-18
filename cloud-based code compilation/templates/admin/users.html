@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends "base.html" %}
 
 {% block content %}
@@ -163,4 +164,171 @@
         background: var(--success);
     }
 </style>
+=======
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="header-actions">
+        <h1>Manage Users</h1>
+        <a href="{{ url_for('admin.add_user') }}" class="btn">
+            <i class="fas fa-plus"></i> Add User
+        </a>
+    </div>
+
+    <div class="table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td><span class="badge {{ user.role }}">{{ user.role }}</span></td>
+                    <td>
+                        {% if user.is_active %}
+                        <span class="status-active">Active</span>
+                        {% else %}
+                        <span class="status-inactive">Disabled</span>
+                        {% endif %}
+                    </td>
+                    <td class="actions">
+                        <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn-icon" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{{ url_for('admin.toggle_user_status', user_id=user.id) }}"
+                            class="btn-icon {{ 'btn-disable' if user.is_active else 'btn-enable' }}"
+                            title="{{ 'Disable' if user.is_active else 'Enable' }}">
+                            <i class="fas {{ 'fa-user-slash' if user.is_active else 'fa-user-check' }}"></i>
+                        </a>
+                        {% if user.id != current_user.id %}
+                        <form action="{{ url_for('admin.delete_user', user_id=user.id) }}" method="POST"
+                            style="display:inline;"
+                            onsubmit="return confirm('Are you sure you want to delete this user?');">
+                            <button type="submit" class="btn-icon btn-delete" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .admin-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .table-container {
+        background: var(--bg-card);
+        border-radius: 1rem;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .admin-table th {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-secondary);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
+
+    .badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .badge.admin {
+        background: #8b5cf6;
+        color: white;
+    }
+
+    .badge.user {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .status-active {
+        color: var(--success);
+    }
+
+    .status-inactive {
+        color: var(--error);
+    }
+
+    .actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-icon {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-icon:hover {
+        background: var(--accent);
+    }
+
+    .btn-delete:hover {
+        background: var(--error);
+    }
+
+    .btn-disable:hover {
+        background: #f59e0b;
+    }
+
+    .btn-enable:hover {
+        background: var(--success);
+    }
+</style>
+>>>>>>> 1b9f44e803ada8be2eab82c14e451e7713b058b2
 {% endblock %}

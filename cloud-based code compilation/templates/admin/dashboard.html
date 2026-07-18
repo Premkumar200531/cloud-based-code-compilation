@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends "base.html" %}
 
 {% block content %}
@@ -104,3 +105,111 @@
     }
 </style>
 {% endblock %}
+=======
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <div class="header">
+        <h1>Admin Dashboard</h1>
+        <p>Manage users and monitor system activity.</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="fas fa-users"></i>
+            <div class="stat-info">
+                <h3>Total Users</h3>
+                <p>{{ users_count }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-user-check"></i>
+            <div class="stat-info">
+                <h3>Active Users</h3>
+                <p>{{ active_users }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-history"></i>
+            <div class="stat-info">
+                <h3>Total Logins</h3>
+                <p>{{ total_logs }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-buttons">
+            <a href="{{ url_for('admin.manage_users') }}" class="btn action-btn">
+                <i class="fas fa-users-cog"></i> Manage Users
+            </a>
+            <a href="{{ url_for('admin.view_logs') }}" class="btn action-btn">
+                <i class="fas fa-list"></i> View Activity Logs
+            </a>
+            <a href="{{ url_for('admin.add_user') }}" class="btn action-btn">
+                <i class="fas fa-user-plus"></i> Add New User
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-dashboard {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .header {
+        margin-bottom: 2rem;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+    .stat-card {
+        background: var(--bg-card);
+        padding: 1.5rem;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: transform 0.3s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    .stat-card i {
+        font-size: 2.5rem;
+        color: var(--accent);
+    }
+    .stat-info h3 {
+        margin: 0;
+        font-size: 1rem;
+        color: var(--text-secondary);
+    }
+    .stat-info p {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    .quick-actions h2 {
+        margin-bottom: 1.5rem;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .action-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 1.5rem;
+    }
+</style>
+{% endblock %}
+>>>>>>> 1b9f44e803ada8be2eab82c14e451e7713b058b2
