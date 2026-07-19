@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import sqlite3
 import os
 
@@ -31,7 +31,7 @@ try:
     print("Database patched successfully")
 except Exception as e:
     print("Error patching database:", e)
-=======
+
 import sqlite3
 import os
 
@@ -64,4 +64,4 @@ try:
     print("Database patched successfully")
 except Exception as e:
     print("Error patching database:", e)
->>>>>>> 1b9f44e803ada8be2eab82c14e451e7713b058b2
+

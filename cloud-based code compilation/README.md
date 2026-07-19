@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # CodeNova - Online Multi-Language Compiler
 
 ## Admin Credentials
@@ -18,7 +18,7 @@
 1. Install dependencies: `pip install -r requirements.txt`
 2. Run the application: `python app.py`
 3. Access at: `http://localhost:5000`
-=======
+
 # CodeNova - Online Multi-Language Compiler
 
 ## Admin Credentials
@@ -38,4 +38,3 @@
 1. Install dependencies: `pip install -r requirements.txt`
 2. Run the application: `python app.py`
 3. Access at: `http://localhost:5000`
->>>>>>> 1b9f44e803ada8be2eab82c14e451e7713b058b2

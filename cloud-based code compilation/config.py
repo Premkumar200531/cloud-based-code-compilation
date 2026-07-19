@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import os
 
 class Config:
@@ -9,7 +9,7 @@ class Config:
     # Execution constraints
     EXECUTION_TIMEOUT = 5  # seconds
     MAX_MEMORY = 512 * 1024 * 1024  # 512 MB (in bytes, simpler for python runner)
-=======
+
 import os
 
 class Config:
@@ -20,4 +20,4 @@ class Config:
     # Execution constraints
     EXECUTION_TIMEOUT = 5  # seconds
     MAX_MEMORY = 512 * 1024 * 1024  # 512 MB (in bytes, simpler for python runner)
->>>>>>> 1b9f44e803ada8be2eab82c14e451e7713b058b2
+

@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 from datetime import datetime, timezone
 from database import db
 from flask_login import UserMixin
@@ -79,7 +79,7 @@ class Snippet(db.Model):
 
     user = db.relationship('User', backref='snippets')
     language = db.relationship('Language', backref='snippets')
-=======
+
 from datetime import datetime, timezone
 from database import db
 from flask_login import UserMixin
@@ -160,4 +160,4 @@ class Snippet(db.Model):
 
     user = db.relationship('User', backref='snippets')
     language = db.relationship('Language', backref='snippets')
->>>>>>> 1b9f44e803ada8be2eab82c14e451e7713b058b2
+
