@@ -113,6 +113,7 @@ class UserLog(db.Model):
 
 class Language(db.Model):
     __tablename__ = 'languages'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     version = db.Column(db.String(20))
@@ -122,6 +123,7 @@ class Language(db.Model):
 
 class Run(db.Model):
     __tablename__ = 'runs'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True) # Can be anonymous
     language_id = db.Column(db.Integer, db.ForeignKey('languages.id'), nullable=False)
@@ -135,6 +137,7 @@ class Run(db.Model):
 
 class Problem(db.Model):
     __tablename__ = 'problems'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
@@ -143,6 +146,7 @@ class Problem(db.Model):
 
 class TestCase(db.Model):
     __tablename__ = 'testcases'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     problem_id = db.Column(db.Integer, db.ForeignKey('problems.id'), nullable=False)
     input_data = db.Column(db.Text, nullable=False)
@@ -151,6 +155,7 @@ class TestCase(db.Model):
 
 class Snippet(db.Model):
     __tablename__ = 'snippets'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     language_id = db.Column(db.Integer, db.ForeignKey('languages.id'), nullable=True) # Null for playground
