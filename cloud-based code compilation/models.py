@@ -105,6 +105,7 @@ class User(UserMixin, db.Model):
 
 class UserLog(db.Model):
     __tablename__ = 'user_logs'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     login_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
