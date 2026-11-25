@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: cloud-code-compiler
+    runtime: docker
+    plan: free
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        sync: false
