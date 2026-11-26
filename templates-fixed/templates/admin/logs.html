@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="header">
+        <h1>Activity Logs</h1>
+        <p>Login and logout times of all users.</p>
+    </div>
+
+    <div class="table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Login Time</th>
+                    <th>Logout Time</th>
+                    <th>Session Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.user.username }}</td>
+                    <td>{{ log.user.email }}</td>
+                    <td>{{ log.login_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>
+                        {{ log.logout_at.strftime('%Y-%m-%d %H:%M:%S') if log.logout_at else 'Active Session' }}
+                    </td>
+                    <td>
+                        {% if log.logout_at %}
+                        {{ (log.logout_at - log.login_at) }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .admin-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .header {
+        margin-bottom: 2rem;
+    }
+
+    .table-container {
+        background: var(--bg-card);
+        border-radius: 1rem;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .admin-table th {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-secondary);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
+</style>
+{% endblock %}
